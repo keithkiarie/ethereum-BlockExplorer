@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Block Explorer</title>
+</head>
+
+<body>
+    <table id="blocks" width="100%">
+        <tr>
+            <th>Number</th>
+            <th>Hash</th>
+            <th>Timestamp</th>
+        </tr>
+    </table>
+</body>
+
+<script src="https://cdn.ethers.io/scripts/ethers-v4.min.js"></script>
+<script>
+
+    let provider; //link to the blockchain
+    let blocks = []; //stores the latest blocks found
+
+    //check if MetaMask is installed
+    (function () {
+        if (typeof web3 !== 'undefined') {
+            console.log('MetaMask is installed');
+
+            provider = new ethers.providers.Web3Provider(web3.currentProvider);
+            getLastBlock();
+        }
+        else {
+            alert('MetaMask is not installed');
+        }
+    }());
+
+    //get the latest block
+    function getLastBlock() {
+        provider.getBlockNumber().then((blockNumber) => {
+            console.log("Current block number: " + blockNumber);
+            blocks = [];
+
+            //get block details for the last ten blocks
+            for (let i = 0; i < 10; i++) {
+                provider.getBlock(blockNumber - i).then((block) => {
+                    blocks.push(block);
+                    return blocks.length;
+
+                }).then((length) => {
+                    //if details about all the blocks are gathered
+                    if (length == 10) console.log(blocks);
+                });
+            }
+
+        });
+    }
+
+
+
+    // function printBlock(block) {
+    //     var table = document.getElementById('blocks');
+    //     var row = table.insertRow(-1);
+    //     var cell1 = row.insertCell(0);
+    //     var cell2 = row.insertCell(1);
+    //     var cell3 = row.insertCell(2);
+    //     cell1.innerHTML = block.number;
+    //     cell2.innerHTML = block.hash;
+    //     cell3.innerHTML = block.timestamp;
+    // }
+</script>
+
+</html>
