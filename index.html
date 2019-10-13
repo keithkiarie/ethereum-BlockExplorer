@@ -6,15 +6,44 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Block Explorer</title>
+
+    <style>
+        .accordion {
+            background-color: #eee;
+            color: #444;
+            cursor: pointer;
+            padding: 18px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 15px;
+            transition: 0.4s;
+        }
+
+        .active,
+        .accordion:hover {
+            background-color: #ccc;
+        }
+
+        .panel {
+            padding: 0 18px;
+            display: none;
+            background-color: white;
+            overflow: hidden;
+        }
+    </style>
 </head>
 
 <body>
-    <table id="blocks" width="100%">
+    <table id="blocks_table">
         <tr>
-            <th>Number</th>
             <th>Hash</th>
+            <th>Number</th>
+            <th>Transactions</th>
             <th>Timestamp</th>
         </tr>
+        <tbody id="blocks_tbody"></tbody>
     </table>
 </body>
 
@@ -51,7 +80,15 @@
 
                 }).then((length) => {
                     //if details about all the blocks are gathered
-                    if (length == 10) console.log(blocks);
+                    if (length == 10) {
+                        console.log(blocks);
+
+                        j = 0;
+                        blocks.forEach(block => {
+                            printBlock(block, j++);
+                        });
+                    }
+
                 });
             }
 
@@ -60,16 +97,38 @@
 
 
 
-    // function printBlock(block) {
-    //     var table = document.getElementById('blocks');
-    //     var row = table.insertRow(-1);
-    //     var cell1 = row.insertCell(0);
-    //     var cell2 = row.insertCell(1);
-    //     var cell3 = row.insertCell(2);
-    //     cell1.innerHTML = block.number;
-    //     cell2.innerHTML = block.hash;
-    //     cell3.innerHTML = block.timestamp;
-    // }
+    function printBlock(block, index) {
+        let tbody = document.getElementById('blocks_tbody');
+
+        tbody.innerHTML += `
+            <tr class="accordion" name="${index}">
+    	        <td>${block.hash}</td>
+                <td>${block.number}</td>
+                <td>${block.transactions.length}</td>
+                <td>${block.timestamp}</td>
+            </tr>
+            <tr class="panel" name="${index}">
+  		        <td colspan="4">Number ${index}</td>
+	        </tr>
+        `;
+
+        //code for toggling the accordion in the table
+
+        let acc = document.getElementsByClassName("accordion");
+
+        for (let i = 0; i < acc.length; i++) {
+            acc[i].addEventListener("click", function () {
+                this.classList.toggle("active");
+
+                var panel = document.getElementsByName(this.attributes["name"].value)[1];
+                if (panel.style.display === "block") {
+                    panel.style.display = "none";
+                } else {
+                    panel.style.display = "block";
+                }
+            });
+        }
+    }
 </script>
 
 </html>
