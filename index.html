@@ -104,16 +104,22 @@
                             </tr>`;
                     }
 
+                    let printed_transactions = 0;
                     //loop through the transactions array in a block
                     block.transactions.forEach(hash => {
 
                         //load each transaction
                         provider.getTransaction(hash).then(transaction => {
-                            blocks[i].transactions.push(transaction);
+                            for (let j = 0; j < blocks.length; j++) {
+                                if (blocks[j].block.hash == transaction.blockHash) {
+                                    blocks[j].transactions.push(transaction);
+                                }
+                            }
 
-
-
-                            printTransaction(transaction);
+                            if (printed_transactions < document.getElementById(`select${transaction.blockHash}`).value) {
+                                printTransaction(transaction);
+                                printed_transactions++;
+                            }
                         });
                     });
 
@@ -144,6 +150,14 @@
             <tr class="panel" name="${index}">
   		        <td colspan="4">
                     <h3>Transactions:</h3>
+                    <span>Show:</span>
+                    <select class='form-control' style='width:30%;' id='select${block.hash}' name='${block.hash}' onchange='repopulate_transactions(this.name, this.value)'>
+                        <option value='5'>5</option>
+                        <option value='10'>10</option>
+                        <option value='50'>50</option>
+                        <option value='all'>All</option>
+                    </select>
+                    
                     <table class="table">
                         <tr>
                             <th>Hash</th>
@@ -178,9 +192,7 @@
 
     function printTransaction(transaction) {
         let tbody = document.getElementById(`transactions${transaction.blockHash}`);
-
-        try {
-            tbody.innerHTML += `
+        tbody.innerHTML += `
             <tr>
                 <td>${transaction.hash != null ? transaction.hash.slice(0, 10) : '<i>Not found</i>'}...</td>
                 <td>${transaction.from != null ? transaction.from.slice(0, 10) : '<i>Not found</i>'}...</td>
@@ -189,10 +201,32 @@
                 <td>${transaction.gasPrice}</td>
             </tr>
         `   ;
-        } catch (error) {
-            console.log(error);
-        }
 
+    }
+
+    function repopulate_transactions(name, number) {
+        document.getElementById(`transactions${name}`).innerHTML = '';
+
+        //loop through the blocks to find the one with this transctions
+        for (let i = 0; i < blocks.length; i++) {
+
+            if (blocks[i].block.hash == name) {
+                //number of transactions to show
+                if (!isNaN(parseInt(number))) {
+                    for (let j = 0; j < number; j++) {
+                        if (j == blocks[i].transactions.length) {
+                            break;
+                        }
+                        printTransaction(blocks[i].transactions[j]);
+                    }
+                } else {
+                    blocks[i].transactions.forEach(transaction => {
+                        printTransaction(transaction);
+                    });
+                }
+                break;
+            }
+        }
     }
 </script>
 
