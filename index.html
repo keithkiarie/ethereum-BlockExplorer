@@ -11,6 +11,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
     <style>
+        /* style for accordion */
         .accordion {
             background-color: #eee;
             color: #444;
@@ -35,11 +36,16 @@
             background-color: white;
             overflow: hidden;
         }
+
+
+        /* style for table */
     </style>
 </head>
 
 <body>
-    <table id="blocks_table" class="table">
+    <h3>Ethereum Blocks Explorer</h3>
+    <span id="fetching_blocks"><i>Fetching the latest blocks...</i></span>
+    <table id="blocks_table" class="table" style="display: none">
         <tr>
             <th>Hash</th>
             <th>Number</th>
@@ -75,6 +81,10 @@
             console.log("Current block number: " + blockNumber);
             blocks = [];
 
+            document.getElementById('fetching_blocks').style.display = 'none';
+            document.getElementById("blocks_table").style.display = 'block';
+
+
             //get block details for the last ten blocks
             for (let i = 0; i < 10; i++) {
                 provider.getBlock(blockNumber - i).then(block => {
@@ -83,8 +93,16 @@
                         transactions: []
                     });
 
+
                     //print the block
                     printBlock(block, i);
+
+                    if (block.transactions.length == 0) {
+                        document.getElementById(`transactions${block.hash}`).innerHTML = `
+                            <tr>
+                                <i>No transactions on this block</i>
+                            </tr>`;
+                    }
 
                     //loop through the transactions array in a block
                     block.transactions.forEach(hash => {
@@ -92,6 +110,8 @@
                         //load each transaction
                         provider.getTransaction(hash).then(transaction => {
                             blocks[i].transactions.push(transaction);
+
+
 
                             printTransaction(transaction);
                         });
@@ -159,15 +179,20 @@
     function printTransaction(transaction) {
         let tbody = document.getElementById(`transactions${transaction.blockHash}`);
 
-        tbody.innerHTML += `
+        try {
+            tbody.innerHTML += `
             <tr>
-                <td>${transaction.hash.slice(0, 10)}...</td>
-                <td>${transaction.from.slice(0, 10)}...</td>
-                <td>${transaction.to.slice(0, 10)}...</td>
+                <td>${transaction.hash != null ? transaction.hash.slice(0, 10) : '<i>Not found</i>'}...</td>
+                <td>${transaction.from != null ? transaction.from.slice(0, 10) : '<i>Not found</i>'}...</td>
+                <td>${transaction.to != null ? transaction.to.slice(0, 10) : '<i>Not found</i>'}...</td>
                 <td>${transaction.value}</td>
                 <td>${transaction.gasPrice}</td>
             </tr>
-        `;
+        `   ;
+        } catch (error) {
+            console.log(error);
+        }
+
     }
 </script>
 
