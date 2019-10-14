@@ -27,8 +27,7 @@
             value="10" class="form-control" style="width: 5%;">
 
         <!--Fetch button-->
-        <button class="btn" id="blocks_no_btn"
-            onclick="{{document.getElementById('blocks_no_input').value == 0 ? document.getElementById('blocks_no_input').value = 1 : true}; getLatestBlocks(document.getElementById('blocks_no_input').value)}"
+        <button class="btn" id="blocks_no_btn" onclick="{{document.getElementById('blocks_no_input').value == 0 ? document.getElementById('blocks_no_input').value = 1 : true}; getLatestBlocks(document.getElementById('blocks_no_input').value)}"
             style="display: none;">Fetch</button>
 
         <!--Refresh button-->
@@ -40,6 +39,9 @@
     </div><br>
 
     <!--Blocks Table-->
+    <span id="instruction" style="display: none;">
+        <small>Click on a block to view its transactions</small>
+    </span>
     <table id="blocks_table" class="table" style="display: none">
         <tr>
             <th>Hash</th>

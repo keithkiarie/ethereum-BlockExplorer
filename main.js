@@ -38,6 +38,7 @@ let provider; //link to the blockchain
                     document.getElementById('fetching_blocks').style.display = 'none';
                     document.getElementById('no_of_blocks').style.display = 'block';
                     document.getElementById("blocks_table").style.display = 'block';
+                    document.getElementById("instruction").style.display = 'block';
 
 
                     //print the block
