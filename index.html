@@ -11,6 +11,15 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
     <style>
+        html {
+            height: 100%;
+            overflow: auto;
+        }
+
+        body {
+            height: 100%;
+        }
+
         /* style for accordion */
         .accordion {
             background-color: #eee;
@@ -141,7 +150,7 @@
 
         //populate the blocks table
         tbody.innerHTML += `
-            <tr class="accordion" name="${index}">
+            <tr class="accordion" name="${index}" onclick='scrollToRow(this)'>
     	        <td>${block.hash}</td>
                 <td>${block.number}</td>
                 <td>${block.transactions.length}</td>
@@ -227,6 +236,10 @@
                 break;
             }
         }
+    }
+
+    function scrollToRow(dist) {
+        window.scrollTo(0, dist.getBoundingClientRect().top);
     }
 </script>
 
