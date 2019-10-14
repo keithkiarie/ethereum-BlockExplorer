@@ -1,5 +1,7 @@
-ethers.js
-MetaMask
+# Explores the latest blocks on Ethereum and displays them together with the transactions in them
+
+# ethers.js
+# MetaMask
 
 First check if MetaMask is installed. If MetaMask is installed:
 
