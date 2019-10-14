@@ -81,8 +81,6 @@
             console.log("Current block number: " + blockNumber);
             blocks = [];
 
-            document.getElementById('fetching_blocks').style.display = 'none';
-            document.getElementById("blocks_table").style.display = 'block';
 
 
             //get block details for the last ten blocks
@@ -93,6 +91,8 @@
                         transactions: []
                     });
 
+                    document.getElementById('fetching_blocks').style.display = 'none';
+                    document.getElementById("blocks_table").style.display = 'block';
 
                     //print the block
                     printBlock(block, i);
