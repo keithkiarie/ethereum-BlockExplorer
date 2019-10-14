@@ -54,12 +54,29 @@
 <body>
     <h3>Ethereum Blocks Explorer</h3>
     <span id="fetching_blocks"><i>Fetching the latest blocks...</i></span>
+
+    <div id="no_of_blocks" class="form-inline" style="display: none;">
+        Number of blocks:
+        <input type="number" id="blocks_no_input"
+            oninput="{document.getElementById('blocks_no_btn').style.display = 'inline'; document.getElementById('refresh_button').style.display = 'none';}"
+            value="10" class="form-control" style="width: 5%;">
+
+        <button class="btn" id="blocks_no_btn"
+            onclick="{getLatestBlocks(document.getElementById('blocks_no_input').value); document.getElementById('refresh_button').style.display = 'inline';}"
+            style="display: none;">Fetch</button>
+
+        <span id="refresh_button" class="glyphicon glyphicon-refresh"
+            onclick="{getLatestBlocks(document.getElementById('blocks_no_input').value)}"></span>
+    </div><br>
+
+    <!--Blocks Table-->
     <table id="blocks_table" class="table" style="display: none">
         <tr>
             <th>Hash</th>
             <th>Number</th>
             <th>Transactions</th>
             <th>Timestamp</th>
+            <th>Gas Used</th>
         </tr>
         <tbody id="blocks_tbody"></tbody>
     </table>
@@ -77,7 +94,7 @@
             console.log('MetaMask is installed');
 
             provider = new ethers.providers.Web3Provider(web3.currentProvider);
-            getLatestBlocks();
+            getLatestBlocks(10);
         }
         else {
             alert('MetaMask is not installed');
@@ -85,15 +102,18 @@
     }());
 
     //get the latest blocks
-    function getLatestBlocks() {
+    function getLatestBlocks(no_of_blocks) {
+        document.getElementById('blocks_no_input').setAttribute('disabled', true);
+        document.getElementById('blocks_no_btn').style.display = 'none';
+
         provider.getBlockNumber().then(blockNumber => {
             console.log("Current block number: " + blockNumber);
             blocks = [];
 
-
+            document.getElementById('blocks_tbody').innerHTML = '';
 
             //get block details for the last ten blocks
-            for (let i = 0; i < 10; i++) {
+            for (let i = 0; i < no_of_blocks; i++) {
                 provider.getBlock(blockNumber - i).then(block => {
                     blocks.push({
                         block: block,
@@ -101,16 +121,18 @@
                     });
 
                     document.getElementById('fetching_blocks').style.display = 'none';
+                    document.getElementById('no_of_blocks').style.display = 'block';
                     document.getElementById("blocks_table").style.display = 'block';
+
 
                     //print the block
                     printBlock(block, i);
 
                     if (block.transactions.length == 0) {
-                        document.getElementById(`transactions${block.hash}`).innerHTML = `
-                            <tr>
-                                <i>No transactions on this block</i>
-                            </tr>`;
+
+                        document.getElementById(`transactions_div${block.hash}`).style.display = 'none';
+                        document.getElementById(`no_transactions_div${block.hash}`).style.display = 'block';
+
                     }
 
                     let printed_transactions = 0;
@@ -136,8 +158,10 @@
 
                 }).then(length => {
                     //if details about all the blocks are gathered
-                    if (length == 10) console.log(blocks);
-
+                    if (length == document.getElementById('blocks_no_input').value) {
+                        console.log(blocks);
+                        document.getElementById('blocks_no_input').removeAttribute('disabled');
+                    }
                 });
             }
 
@@ -154,29 +178,37 @@
     	        <td>${block.hash}</td>
                 <td>${block.number}</td>
                 <td>${block.transactions.length}</td>
-                <td>${block.timestamp}</td>
+                <td>${new Date(block.timestamp * 1000)}</td>
+                <td>${block.gasUsed._hex}</td>
             </tr>
             <tr class="panel" name="${index}">
   		        <td colspan="4">
                     <h3>Transactions:</h3>
-                    <span>Show:</span>
-                    <select class='form-control' style='width:30%;' id='select${block.hash}' name='${block.hash}' onchange='repopulate_transactions(this.name, this.value)'>
-                        <option value='5'>5</option>
-                        <option value='10'>10</option>
-                        <option value='50'>50</option>
-                        <option value='all'>All</option>
-                    </select>
+
+                    <div id='transactions_div${block.hash}'>
+                        <span>Show:</span>
+                        <select class='form-control' style='width:30%;' id='select${block.hash}' name='${block.hash}' onchange='repopulate_transactions(this.name, this.value)'>
+                            <option value='5'>5</option>
+                            <option value='10'>10</option>
+                            <option value='50'>50</option>
+                            <option value='all'>All</option>
+                        </select>
                     
-                    <table class="table">
-                        <tr>
-                            <th>Hash</th>
-                            <th>From</th>
-                            <th>To</th>
-                            <th>Value</th>
-                            <th>Gas Price</th>
-                        </tr>
-                        <tbody id="transactions${block.hash}"></tbody>
-                    </table>
+                        <table class="table">
+                            <tr>
+                                <th>Hash</th>
+                                <th>From</th>
+                                <th>To</th>
+                                <th>Value</th>
+                                <th>Gas Price</th>
+                            </tr>
+                            <tbody id="transactions${block.hash}"></tbody>
+                        </table>
+                    </div>
+
+                    <div id='no_transactions_div${block.hash}' style='display:none;'>
+                        <i>No transactions found on this block</i>
+                    </div>
                 </td>
 	        </tr>
         `;
@@ -238,9 +270,11 @@
         }
     }
 
+    //function for scrolling the page when a block has been clicked
     function scrollToRow(dist) {
         window.scrollTo(0, dist.getBoundingClientRect().top);
     }
+
 </script>
 
 </html>
