@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
-    
+
 </head>
 
 <body>
@@ -28,7 +28,7 @@
 
         <!--Fetch button-->
         <button class="btn" id="blocks_no_btn"
-            onclick="{getLatestBlocks(document.getElementById('blocks_no_input').value)}"
+            onclick="{{document.getElementById('blocks_no_input').value == 0 ? document.getElementById('blocks_no_input').value = 1 : true}; getLatestBlocks(document.getElementById('blocks_no_input').value)}"
             style="display: none;">Fetch</button>
 
         <!--Refresh button-->
