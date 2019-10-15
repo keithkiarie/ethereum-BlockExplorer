@@ -1,0 +1,20 @@
+{
+  "name": "ethereum-block_explorer",
+  "version": "1.0.0",
+  "description": "Web App that explores the latest blocks on Ethereum and displays them together with the transactions in them",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/keithkiarie/ethereum-blocks-display.git"
+  },
+  "author": "Keith Kiarie",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/keithkiarie/ethereum-blocks-display/issues"
+  },
+  "homepage": "https://github.com/keithkiarie/ethereum-blocks-display#readme"
+}
