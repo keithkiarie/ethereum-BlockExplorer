@@ -1,4 +1,4 @@
-# Explores the latest blocks on Ethereum and displays them together with the transactions in them
+# Explores the latest blocks on Ethereum blockchain platform and displays them together with the transactions in them
 
 # Dependencies
     ethers.js (included in the html)
